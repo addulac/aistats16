@@ -1,0 +1,80 @@
+\section{Appendix}
+\label{sec:append}
+
+\subsection{Mixed membership Models}
+\label{sec:mixmembership}
+In the Mixed Membership Models \cite{MMM}, the models can be defined at the link level by the likelihood of generating a link between two nodes given the contribution of each classes (or features). For IMMSB, this likelihood is straightforward, but for ILFM the class membership is defined deterministically by the binary vector $\mat{f}$. If the $k^{th}$ row is active (equal to one) then the node has the membership, else it doesn't. Hence for ILFM, We can write the likelihood  using the Dirac distribution $\delta(x)$ that gives one for $x=0$ as follows:
+
+\begin{align}
+    \pr(y_{ij} \mid \mat{F}, \mat{\Phi } ) &= \sigma \sum_{k, k'} \pr(y_{ij}\mid\phi_{k,k'}) \pr(k \mid \mat{f}_i) \pr(k' \mid \mat{f}_j) \\
+    &=  \sigma \sum_{k, k'} \phi_{k,k'}  \delta(1-f_{ik}) \delta(1-f_{jk'})
+    \end{align}
+    
+
+\subsection{Collapsed Gibbs sampling updates for IMMSB}
+
+We provide here the derivation of the updates of the IMMSB model, described in Section~\ref{sec:models}.
+
+%From the definition of the model, one has: $\pr(z_{ij} = k \mid \mat{f}_i) = f_{ik}$.
+
+%\textcolor{red}{Adrien, peux-tu donner la d\'erivation ? La forme actuelle n'est valable que pour MMSB.} 
+
+%heeeere \alpha is \alpha_0
+
+Inference for the IMMSB model by using the Collapse Gibbs sampler gives updates for class assignment $Z \in N\times N \times 2$ for each interactions $Y \in N\times N$. Thus for all pair of interaction (i,j) we jointly sample the classes $(z_{ij}, z_{ji})$ who implicitly, take the values $(k,k')$ :
+\begin{align} \label{eq:cgs}
+&\pr(z_{ij}, z_{ji} \mid Z^-, Y,  \mat{\beta}, \alpha, \mat{\lambda} )  \\
+&\propto\pr(z_{ij}, z_{ji} \mid Z^-, \alpha,\mat{\beta}) \pr(y_{ij} \mid Y^{-ij},  Z^-,z_{ij}, z_{ji},  \mat{\lambda} ) \nonumber
+\end{align}
+The term $Z^-$ denote that both $z_{ij}$ and $z_{ji}$ are exclude from $Z$. We now treat the first term of equation \ref{eq:cgs}.  
+\begin{align}
+&\pr(z_{ij}, z_{ji} \mid Z^-, \alpha,\mat{\beta})\\
+&\propto \pr(z_{i\rightarrow j} \mid \{z_{i\rightarrow j'}\}_{j'\neq j}, \{z_{j'\leftarrow i}\}_{j'=1}^N, \alpha,\mat{\beta}) \\
+& \quad .  \pr(z_{i\leftarrow j} \mid \{z_{i'\leftarrow j}\}_{i'\neq i}, \{z_{j\leftarrow i'}\}_{i'=1}^N, \alpha,\mat{\beta}) \nonumber
+\end{align}
+Let's consider the density of $z_{i\rightarrow j}$:
+\begin{align}
+&\propto \pr(z_{i\rightarrow j} \mid \{z_{i\rightarrow j'}\}_{j'\neq j}, \{z_{j'\leftarrow i}\}_{j'=1}^N, \alpha,\mat{\beta})  \\
+&\propto \int_{f_i} \pr(f_i \mid \mat{\beta}, \alpha) \pr(z_{ij} \mid f_i) \prod_{j'\neq j} \pr(z_{ij'} \mid f_i) \prod_{j' =  1}^N  \pr(z_{j' i} \mid f_i)  df_i \nonumber
+\end{align}
+
+
+Due to the an augmented representation of the Chinese Restaurant Franchise (CRF) with the Stick Breaking Process \cite{HDP}, the density of the features can be approximated by the following Dirichlet distribution;
+\begin{equation}
+f_i \mid \mat{\beta}, \alpha \sim Dir(\alpha \beta_1,..,\alpha\beta_K, \alpha\beta_{new})
+\end{equation}
+Where $\alpha\beta_{new}$ represent the contribution for sampling a new class. Since $\pr(z_{ij} \mid f_i)$ is drawn from a multinomial, the model is said to be conjugate and reduce to a simple closed form expression:
+\begin{enumerate}
+\item If the class $k$ has already been observed:
+   \begin{align}
+    \pr(z_{ij} =k \mid .) &\propto N_{ik}^{-ij} + \alpha_0 \beta_k
+    \label{eq:update-immsb}
+   \end{align}
+\item In case of a new class $k_{new}$:
+   \begin{align}
+    \pr(z_{ij} =k_{new} \mid.) &\propto \alpha_0 \beta_{new} \nonumber   
+   \end{align}
+\end{enumerate}
+ Where  $N_{ik}$ is the count for node $i$ being assigned to class $k$. As we show that the equations are symmetric, sampling for $z_{ji}$ is straightforward.
+
+~\\
+Again, referring the CRF, the sampling of the tables configuration $\mat{m}$ is given by: 
+\begin{equation}
+\pr(m_{ik} \mid Z, \bm{m}^{-ik}, \mat{\beta} ) = \frac{\Gamma(\alpha_0 \beta_k)}{\Gamma(\alpha_0 \beta_k + n_{j\bm{.   }k})} s(n_{j\bm{.}k}, m) (\alpha_0 \beta_k)^m
+\end{equation}
+And, finnaly  $\mat{\beta}$ is obtained by:
+\begin{equation}
+\mat{\beta} \sim Dir(m_1,.., m_K, \gamma)  
+\end{equation}
+Where $s(n,m)$ is the unsigned Stirling number of the first kind.
+
+
+~\\
+Finally, when the markov chain reach the stationnary distribution, the models parameters $\M = \{\mat{\Phi}, \mat{F}\}$ can be recovered by averaging the topics assignement counts for each membership and each relation:
+\begin{align}
+&\pr(f_{ik}) =\frac{ N_{ik} + \alpha\beta_k}{ N_{i\bm{.}} + \sum_k\alpha_k }\\
+&\pr(\phi_c ) = \frac{M_{c1} + \lambda_1}{M_{c\bm{.}} + \lambda_0 + \lambda_1}
+\end{align}
+
+
+The count for node $i$ being assigned to membership $k$ is $N_{ik}$. And the count of for all couple of classes $c=(k,k')$ being associated to relation $r$ is $M_{cr}$. Note that in our case, the relation $r$ take values in (0,1) accounting for link or non-link between two node.
