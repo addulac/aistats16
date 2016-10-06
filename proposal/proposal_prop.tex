@@ -1,0 +1,136 @@
+\documentclass[a4paper, 12pt]{article}
+%\documentclass[a4paper, 12pt, draft]{article} % don't include images, leave a border of same size...great
+
+\input{../header.tex}
+
+\title{
+	%\vspace{2cm}
+	\Large{Social Networks Properties Study of Latent Class models}\\
+	--\\ }
+
+%\date{avril 2015}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}{Theorem}[section]
+
+\begin{document}
+
+\section{Models and Properties}
+Nous définissons un modèle génératif selon 3 objets:
+\begin{itemize}
+\item Les hyperparamètres d'un modèle $\mathcal{M}$
+\item les paramètres aléatoires du modèle $\Theta$. Dans les latent class models et particulièrement MMSB, on a $\Theta = \{F, \Phi, Z\}$
+\item Les observations Y qui sont les objets générés par le modèle.
+\end{itemize}
+
+Notre but est d'étudier le comportement de modèle génératif de réseaux. Pour cela on définit des propriétés adaptés à un cadre probabiliste. Nous affirmons qu'une propriété peut être considéré selon deux hypothèse distincte:
+\begin{itemize}
+\item propriété strong: propriété vrai et inhérente au modèle, on regarde ce que génère un réseaux étant donné ses paramètre aléatoires (intérêt pour l'ingénierie des paramètres...). $\Theta \longrightarrow Y$
+\item propriété weak: on ne connaît pas les paramètre aléatoires, seulement, les hyperparamètres. On raisonne selon ce schéma $\mathcal{M} \longrightarrow Y$
+\end{itemize}
+
+\paragraph{prosition1:}
+Si une propriété est strong, alors elle est aussi "weak" vrai, car si elle est vrai pour un choix arbitraire de paramètres, ce choix tombe dans le tirage possible du modèles $\mathcal{M}$.\\
+
+Dans la suite de cet écrit, nous proposons/définissons et vérifions le respect de propriétés fondamental des réseaux(preferantial attach, homophily, small world, sparsity).
+
+\section{MMSB}
+
+...
+
+\section{Burstiness $\Delta_n p(y_ij=1|d_i>n) > 0 $}
+
+i) Le réseau est trivialement **non strongly bursty**\\
+ii) weakly ? 
+
+Mon raisonnement est le suivant:
+\begin{enumerate}
+
+\item on constate que la distribution du degrée n'est pas exploitable et n'admet pas de forme close connue (see Neal)
+\item on montre qu'en générant $Z$  (ie $Z$ est généré avec $d_i$, par le modèle), on a une expression [1].
+\item on montre que cette expression permet de réécrire le burstiness
+\item on montre que le burstiness est croissant si [1] est croissant
+\item on montre que [1] est croissant avec n quelque soit les concentrations données par Z...
+\end{enumerate}
+
+De la définition du burstiness on obtient:
+\begin{equation}
+p(y_{ij} = 1 | d_i>n, \mathcal{M}) = \int_{\Theta} p(y_{ij}=1|\Theta) \frac{p(d_i>n | \Theta)}{p(d_i>n)} p(\Theta) d\Theta
+\end{equation}
+
+Dans [*] on montre que distribution sur le degré n'a pas de forme connue (fait bien connue pour le p(w) de LDA).
+Par contre, nous pouvons faire l'hypothèse que pour chaque valeur possible $l$  du degré généré, soit accompagné de la matrice Z contenant les valeurs des classe d'attributions, pour chaque lien généré. Notons que nous ne faisons aucune hypothèse sur la distribution des classes d'attributions (c'est à dire de leur concentration, on dit simplement que chaque liens (ou non lien) ets associé à un couple kk'). la distribution est désormais implicitement conditionné par Z. Hors, étant donnée que le modèle est jointement échangeable [aldous, Hoff], on obtient:
+
+\begin{align}
+p(y_{ij} = 1 | d_i>n, \mathcal{M}) &= \int_{\Theta} p(y_{ij}=1|\Theta) \frac{\sum_{l=n}^N\dbinom{N}{l} p(d_i^N=l | \Theta)}{\int_{\Theta}\sum_{l=n}^N \dbinom{N}{l}p(d_i^N=l | \Theta)} p(\Theta) d\Theta \\
+&= \frac{\sum_l^N\dbinom{N}{l} \int_{\Theta} p(y_{ij}=1|\Theta) p(d_i^N=l | \Theta) p(\Theta) d\Theta }{\sum_l^N \dbinom{N}{l}\int_{\Theta} p(d_i^N=l | \Theta) p(\Theta) d\Theta } \\
+&=  \frac{\sum_l^N a_l}{\sum_l^N b_l} 
+\end{align}
+
+Interestingly, one can recognize that:
+\begin{equation}
+\frac{a_l}{b_l} = p(y_{ij}=1 | d_i^N=l, Z) 
+\end{equation}
+
+We show in [*] that for an undirected network, the following holds:
+
+\begin{align}\label{eq:fu}
+pp(y_{ij}=1 | d_i^N=l, Z) &=\sum_{k<k'} \frac{ d_i^{kk'} + \lambda_1}{N_o^{kk'} + \lambda_{.}} \frac{(n_{ik}+ \alpha)(n_{jk'} + \alpha)}{(N+\alpha_.)^2} \\
+&=\frac{1}{2} \hat f_i^T \hat \Phi \hat f_j
+\end{align}
+
+We show that an other interesting parametrization, higlithing the degree dependance is:
+
+
+\begin{equation} \label{eq:fu}
+p(y_{ij}=1 | d_i^N=l, Z) = \frac{1}{2}\ l\ sum(R \circ C \circ S(i,j)) + sum(\lambda_1 C\circ S(i,j))
+\end{equation}
+
+Where $R$, $C$ and $S$ are strictly positive matrix and their $sum(.)<1$. Moreover those matrix only depend on the class concentration whitin each node and more precisely see [*]:
+\begin{itemize}
+\item $S(i,j) = (\hat f_i \otimes \hat f_j)$ define the node similarity, depending on their class membership and $0<S<1$, \\
+\item $C = (\frac{1}{N_o^{kk'} + \lambda_{.}})_{kk'}$, a normalization factor for nodes interactions, \\
+\item $R = (r_{kk'})_{kk'}$ express the affinity between the two classes and $0<R<1$.
+\end{itemize}
+
+
+Thus one can write that $a_l = b_l g_l$, with $g_l$ defined by \eqref{eq:fu}.
+
+Now let's define the following series:
+\begin{equation}
+an = \frac{\sum_{l=n}^N b_l g_l}{\sum_{l=n}^N b_l}
+\end{equation}
+
+Given that $b_l$ and $g_l$ are positive, we show that if $\Delta_n g_n$ is increasing with $n$, then it implies that $a_n$ is increasing with $n$:
+
+proof:
+\begin{align}
+\Delta_n a_n &= \frac{\sum_{l=n+1}^N g_l b(l)}{\sum_{l=n+1}^N b(l)} - \frac{g_n b(n) + \sum_{l=n+1}^N g_l b(l)}{b(n) + \sum_{l=n+1}^N b(l)} \\
+&= \frac{b(n)}{\left(b(n) + \sum_{l=n+1}^N b(l)\right) \left(\sum_{l=n+1}^N b(l)\right)} \sum_{l=n+1}^N (g_l-g_n)b(l)
+\end{align}
+As we have $l \geq n$, it proves the hold.\\
+
+Because $g_l$ is linear\footnote{Note that this linearity is broken if the generation of new links would modify the concentration of links which is not the case in the assumptions of MMSB.} at a fixed class contration state (corresponding to matrix Z) with the degree, it is straightforward  that the networks satisfies the global preferential attachment.
+
+Similarly, for the local preferential attachment we can assess that from the definition, when (i) and (j) are in class c={k,k'}, we have simply that:
+\begin{equation}
+p(y_{ij} | d_{ic}^N=l, Z) = \frac{1}{2}\ l\ R_c  C_c S(i,j)_c + \lambda_1 C_c S(i,j)_c
+\end{equation}
+
+Again, we see that local preferential burstiness is true, furthermore as $ R_c  C_c  S(i,j)_c) + \lambda_1 C_c S(i,j)_c$ is a strictly increasing function of concentration of class assignment in $c$.
+
+\subsection{Discussion}
+
+
+* local preferential attachment inter-commmunity!! (homophily vs stochastic equivalence). Pure power law function not possible (see expe)\\
+* impact of global density\\
+* Haldous hoover theorem and temporal networks sparsity and limit.
+
+
+\section{Discussions}
+
+* Relation with diaconis-Ylvisaker theorem, and how we generalize it, for mixed membershi model in exponential family. (probabilistic\_burstiness)
+
+
+\end{document}

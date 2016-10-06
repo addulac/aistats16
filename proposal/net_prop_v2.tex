@@ -1,0 +1,198 @@
+\documentclass[a4paper, 12pt]{article}
+%\documentclass[a4paper, 12pt, draft]{article} % don't include images, leave a border of same size...great
+
+\input{../header.tex}
+
+\title{
+      %\vspace{2cm}
+      \Large{Social Networks Properties Study of Latent Class models}\\
+            --\\ }
+
+%\date{avril 2015}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}{Theorem}[section]
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+%Networks properties study of latent class models
+%
+% # Intro
+%
+%* generative models encode assumptions about observations data, and
+%generative propertie can be stated. Nevertheless, the purpose of such
+%latent models is to be infered given the data, which results in a
+%modified form of the original canonical expression of the model. This is
+%called the posterior distribution.
+%
+%* We review the Mixed Membership Stochastic Blockmodels Models (MMSB),
+%and show that it's design on based conjugate familly gives remarquable
+%natural properties that arise in natural networks. Namely the
+%preferential attachment effect and the homophily effect, under "non
+%convex" combination of models parameters and particularly the mixed
+%membership mixing of the models. We study some asymptotic properties of
+%a non paramertric version that generalise the models for possibly
+%infinite latent classes or blocks and show limitation of the models in
+%term of small world effect.
+%
+%* propose difference between homophily and structural equivalence by
+%controling beta -> lead interpretation of class as community....
+%
+%# related Work / Context
+%
+%## inference
+%Scaling to massive network [], Variational inference and HDP []?. Indian
+%buffet process claims better result but harder to be scaled and for same
+%reason, hard to assess th properties.
+%
+%## Blockmodels
+%While HDP is used to learn the number of latent classes, few work focus
+%on the asymptotic behaviour of such prior and often hyperparameter are
+%ignored. We propose here a starting point for such analysis, making
+%relatino between the latent class dynamics, with the hyperparameter and
+%the observed data.
+%
+%## preferential attachment and small world. (citation from (Preferential
+%Attachment in Graphs with Affnities]
+%In order to model the burstiness of network, which is related to
+%preferential attachment effect, authors [barabasi, ERGM] has proposed
+%several model. But recent works show that model that are infinitely
+%exchangeable bayesian graph models (edge or vertex !), are mispecified,
+%and "connot model power law" (power is a special case of burstiness...)
+%as they lead to dense or empty networks [22]. See Aldous-Hoover theorem,
+%see [23]. (similar degeneracie for EGRM models [24, 25].
+%
+%
+%**Where is our work in this scheme**
+%
+%To overcome this limitation, recent works focus on graphon to models
+%some continuity £. [26, 27], but pratical implication are unclear [28].
+%
+
+
+\section{MMSB}
+In the following, we will consider graph $G=(V,E)$ of size $|V|=N$. Hence $G$ defines a adjacency binary matrix $Y=(y_{ij})_{i,j \in \mathbb{N}}$ such that $y_{ij}=1$ if there an edge between node $i$ and $j$. Additionally and whitout loss of generality we consider a undirected graph and it imply that $\pr(z_{i\rightarrow j}) = \pr(z_{j\leftarrow i})$ and $\phi_{kk'} = \phi_{k'k}$ \\
+
+...generative models...\\
+
+Basically we have the following independences:
+\begin{itemize}
+	\item $(y_{ij} \Perp Y^{-ij} \mid \phi_{kk'})$, links interactions are iid given the classes membership and weight interactions.
+	\item $(z_{i\rightarrow j} \Perp Y^{-ij} \mid f_i)$,  Each interactions draws it's own membership.
+    \item $(\phi_{kk'} \Perp \mat{\Phi}^{-kk'} | \sigma_w)$, class weight interactions are iid (Beta).
+    \item $(f_i \Perp F^{-i} | \alpha)$, feature vectors are iid (Dirichlet) over nodes of the network.
+\end{itemize}
+
+
+
+
+Notation remark 1: 
+we write equivalently  $\pr(z_{i\rightarrow j}=k | f_i)$ as $\pr(k \mid f_i)$ as the probability that node $i$ takes membership in class $k$ for the interactions with $j$. \\
+
+Notation remark 2: $p(d_i^{N, l}) = p((y_{ij})_{j=0}^N )$
+
+
+\subsection{Likelihoods}
+The likelihood that an edge is being generated is given by the observation plate in the graphical model. Marginalizing over the class assignment for both vertices gives us:
+
+\begin{equation} \label{eq:mmsb_like}
+p(y_{ij} \mid f_i, f_j, \Phi) = \sum_{k<k'} p(y_{ij} \mid \phi_{kk'})\ p(k\mid f_i)\ p(k'\mid f_j)
+\end{equation}
+
+Let's now tackle the probability of the degree $d_i$ of a random vertex $i$, that is equal to $n$. Let's consider the joint probability from the graphical model:
+\begin{equation}
+p(d_i, F, \Phi \mid \alpha, \lambda) = p(f_i| \alpha)p(\Phi|\lambda) \prod_{j\neq i} p(f_j|\alpha) \sum_{k<k'} p(y_{ij} \mid \phi_{kk'})\ p(k\mid f_i)\ p(k'\mid f_j)
+\end{equation}
+
+The degree distribution if then obtained by marginalizing the models parameters:
+
+\begin{equation}
+p(d_i \mid \alpha, \lambda) = \int_F \int_\Phi p(f_i| \alpha)p(\Phi|\lambda) \prod_{j\neq i} p(f_j|\alpha) p(y_{ij} \mid f_i, f_j, \Phi) \ dF d\Phi
+\end{equation}
+
+As for LDA, there is no closed form expression for this integral due to complex coupling between the weights interactions $\phi_{kk'}$ and the class membership $z_{i\rightarrow .}$. 
+
+\subsection{Predictive Distribution}
+Even though the degree distribution has no closed form, the predictive likelihood that a node $i$ generate a \emph{new unobserved edge} $y_{ij}$ given it's degree $d_i$ out of $N_o$ observed edges can be estimated due to the conjugacy of priors within MMSB model. More formally let's first consider that the membership matrix $Z$ associated with the observed degree is known. One can consider the given set $\mathcal{D} = \{d_i, Z\}$. Hence we can rewrite equation \eqref{eq:mmsb_like} as follows:
+
+\begin{align} \label{eq:pred}
+p(y_{ij}^{new} \mid \D, \alpha, \lambda) &= \int_{fi} \int_{f_j} \int_{\Phi} p(f_i|\D, \alpha, ) p(f_j|\D, \alpha)p(\Phi|\D, \lambda, ) \\
+&\times \sum_{k<k'} p(y_{ij} \mid \phi_{kk'})\ p(k\mid f_i)p(k'\mid f_j)df_i df_j d\Phi
+\end{align}
+
+One can notice the following useful identity here (we omit $\alpha$ here) by noticing that $di \Perp f_i \mid Z$, and that  $f_i | \D$ and  $\Phi | \D$  are respectively  conjugate posteriors in the Dirichlet and beta distributions:
+\begin{align}
+p(f_i|\D) &= \frac{p(d_i, Z | fi) p(f_i)}{p(z, d_i)} = \frac{p(d_i|Z, f_i) p(Z|f_i) p(f_i)}{ p(d_i|Z)p(Z)} =  \frac{ p(Z|f_i) p(f_i)}{p(Z)} \\
+&= Dir(f_i, \mat{\alpha} + \mat{n_i})
+\end{align}
+Where $\mat{n_i}$ is a k-rows vector representing the count of observed link or non-links such as node $i$ take class $k$, therefore $n_{ik} = \sum_j \bm{1}( z_{i\rightarrow j}=k)$.
+
+Similarly we obtains:
+\begin{equation}
+p(f_j|\D) = Dir(f_j, \mat{\alpha} + \mat{n_j})
+\end{equation}
+Hence we have$n_{jk} = \sum_i \bm{1}( z_{i\leftarrow j}=k')$.
+Finally for the weight interaction we have that:
+\begin{equation}
+p(\phi_{kk'}|\D) = B(N_o- d_i^{k,k'} +\lambda_0, d_i^{k,k'} + \lambda_1)
+\end{equation}
+With $d_i^{kk'} = \sum_j \bm{1}(y_{ij}=1, z_{i\rightarrow j}=k, z_{i\leftarrow j}=k' )$ and the joint distributions of weights interaction is:
+\begin{equation}
+p(\Phi |\D) = \prod_{k<k'} p(\phi_{kk'}|\D)
+\end{equation}
+
+Thus, going back to equation \eqref{eq:pred}, each factorial terms of the posteriors distribution have a term  corresponding to the sum over all $\{k<k'\}_{k, k'=0}^{k,k'=K}$, that can be distributed on. Hence one can recognize that the predictive distribution of generating an edge between $i$ and $j$ is:
+\begin{equation}
+p(y_{ij}^{new} \mid \D, \alpha, \lambda) = \sum_{k<k'} \E[B((N_o- d_i)^{k,k'} +\lambda_0, d_i^{k,k'} + \lambda_1)]_{kk'} \E[Dir(\mat{\alpha} + \mat{n_i})]_k \E[ Dir(\mat{\alpha} + \mat{n_j})]_{k'}
+\end{equation}
+
+Finally we have that:
+\begin{equation}
+p(y_{ij}^{new}=1 \mid \D, \alpha, \lambda)= \sum_{k<k'} \frac{ d_i^{kk'} + \lambda_1}{N_o^{kk'} + \lambda_{.}} \frac{(n_{ik}+ \alpha)(n_{jk'} + \alpha)}{(N+\alpha_.)^2} =\frac{1}{2} \hat f_i^T \hat \Phi \hat f_j
+\end{equation}
+
+We see that the first term account for the node $i$ popularity while the second term account for the similarity between $i$ and $j$, and:
+\begin{align}
+\hat f_{ik} = \frac{n_{ik}+ \alpha}{N+\alpha_.} \\
+\hat f_{jk} = \frac{n_{jk}+ \alpha}{N+\alpha_.} \\
+\hat \phi_{kk'} = \frac{ d_i^{kk'} + \lambda_1}{N_o^{kk'} + \lambda_{.}}
+\end{align}
+
+One can notice that $d_i^{kk'} = d_i \frac{N_o^{kk',1}}{N_o^{kk'}}=d_i r_{kk'}$. This enable us to extract the degree. Morever let's define the following matrices:
+
+\begin{itemize}
+\item $S(i,j) = (\hat f_i \otimes \hat f_j)$ define the node similarity, depending on their class membership and $0<S<1$, \\
+\item $C = (\frac{1}{N_o^{kk'} + \lambda_{.}})_{kk'}$, a normalization factor for nodes interactions, \\
+\item $R = (r_{kk'})_{kk'}$ express the affinity between the two classes and $0<R<1$.
+\end{itemize}
+
+Finally the predictive likelihood can be expressed with those quantities as:
+
+\begin{equation}
+p(y_{ij}^{new}=1 \mid \D, \alpha, \lambda)= \frac{1}{2}\ d_i\ sum(R \circ C \circ S(i,j)) + sum(\lambda_1 C\circ S(i,j))
+\end{equation}
+
+On the next sections we will study this distribution and analyse their meaning on the structure of generated networks.
+
+%For the general case where $n_j$ is observed greater than 0, we have:
+%\begin{equation}
+%p(y_{ij}^{new}=1 \mid \D, \alpha, \lambda) = \hat f_i \hat \Phi\hat f_j
+%\end{equation}
+
+%$\E_{\Theta|D}[\E_{z_{i\rightarrow j}, z_{i\leftarrow j} | \Theta}[p(y_ij\mid D)]]$
+
+
+
+\subsection{Burstiness}
+
+
+\subsection{Homophily}
+
+\subsection{Small World}
+
+\subsection{Sparsity}
+
+\end{document}

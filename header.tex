@@ -22,10 +22,11 @@
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{fancyvrb}
 \usepackage{yfonts}
+%\usepackage{txfonts}
 
 \usepackage{wrapfig}
 \usepackage{tikz}
-    %\input{../tikz.conf}
+
     
 \usetikzlibrary{bayesnet}
     
@@ -34,7 +35,7 @@
 \usepackage{xparse}%  For \NewDocumentCommand
 \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
 
-%%%%%%%%%% Math
+%%%%%%%%%% Variable and Functions
 \renewcommand{\text}{\textnormal}
 \newcommand{\pr}{\mathbf{p}}
 \newcommand{\E}{\mathbb{E}}
@@ -47,6 +48,12 @@
 \newcommand{\M}{\mathcal{M}}
 \newcommand{\V}{\mathcal{V}}
 \newcommand{\N}{\mathcal{N}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+
+% Symbols
+\newcommand{\Perp}{\mathrel{\text{\scalebox{1.07}{$\perp\mkern-10mu\perp$}}}}
+
     
 \makeatletter
 \NewDocumentCommand{\DrawBox}{s O{}}{%
@@ -121,8 +128,3 @@
 \fancyfoot[C]{\thepage}
 \renewcommand{\footrulewidth}{0.3pt}
 \renewcommand{\headrulewidth}{0.3pt}
-
-
-
-
-
