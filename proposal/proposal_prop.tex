@@ -111,7 +111,7 @@ proof:
 \end{align}
 As we have $l \geq n$, it proves the hold.\\
 
-Because $g_l$ is linear\footnote{Note that this linearity is broken if the generation of new links would modify the concentration of links which is not the case in the assumptions of MMSB.} at a fixed class contration state (corresponding to matrix Z) with the degree, it is straightforward  that the networks satisfies the global preferential attachment.
+Because $g_l$ is linear\footnote{Note that this linearity is broken if the generation of new links would modify the concentration of links which is not the case in the assumptions of MMSB.} at a fixed class contration state (corresponding to a matrix Z) with the degree, it is straightforward  that the networks satisfies the global preferential attachment.
 
 Similarly, for the local preferential attachment we can assess that from the definition, when (i) and (j) are in class c={k,k'}, we have simply that:
 \begin{equation}
@@ -176,18 +176,18 @@ component created. Moreover in the CRF, each table is drawn from a DP while the 
 \begin{align}
 \E[T|N, \alpha_0] = \sum_{j=1}^N\sum_{i=1}^N \frac{\alpha_0}{\alpha_0 +i-1} = \alpha_0 N (\Psi(\alpha_0+N) - \Psi(\alpha_0))
 \end{align}
-Given the properties of the $\Psi$ function, we have three different limit for $E[T|N]$:
+Given the properties of the $\Psi$ function, we have three different limit for $\E[T|N]$:
 \begin{itemize}
 	\item $\alpha_0 N log(1+\frac{N}{\alpha_0})$ if  $\alpha_0 \sim 0$
 	\item $\alpha_0 N log(N)$ if  $\alpha_0 \sim 1$
 \end{itemize}
-Here, we omit the case of $\alpha_0 >> 0$ as non usefull in real case because small value is preferred since it offers a better sparsity about on the proportion of classes that node belong to. Similarly, for the expectation of the number of class, we have:
+Here, we omit the case of $\alpha_0 >> 0$ as non usefull in real case because small value is preferred since it offers a better sparsity about on the proportion of classes that node belongs to. Similarly, for the expectation of the number of class, we have:
 
 \begin{equation}
 \E[K|T, \gamma] = \sum_{i=1}^N\sum_{i=1}^{2T} \frac{\gamma}{\gamma +i-1} = \gamma (\Psi(\gamma+2T) - \Psi(\gamma))
 \end{equation}
 
-Finally one can note that $N >> 0$ implies that $T>>0$, hence we gives here a table of asymptotic value for $E_{T|\alpha_0}[E[K|T, \gamma]$:
+Finally one can note that $N >> 0$ implies that $T>>0$, hence we give here a table of asymptotic value for $E_{T|\alpha_0}[E[K|T, \gamma]$:
 %\begin{table}[h]
 
 	\begin{tabular}{c|cc}
@@ -198,7 +198,7 @@ Finally one can note that $N >> 0$ implies that $T>>0$, hence we gives here a ta
 	\end{tabular}
 %\end{table}
 
-We conclude that the model has some good affinities with the small world effect has the number of class grow in $log(log(N))$ if the paramater $\gamma$ has decay lesser than $exp(-N)$. Formally, this means that in the case where  $\gamma_N = f(N)$ and $\lim_{N\to\infty}\gamma_N \to 0$ the following holds:
+We conclude that the model has some good affinities with the small world effect has the number of class grow in $log(log(N))$ if the paramater $\gamma$ has decay slower than $exp(-N)$. Formally, this means that in the case where  $\gamma_N = f(N)$ and $\lim_{N\to\infty}\gamma_N \to 0$ the following holds:
 $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 
 
@@ -206,16 +206,16 @@ $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 (defnition of dense and sparse netwroks are given in [Haldous])
 
 
-In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a links:
+In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a link:
 \begin{equation}
-p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} p(Y_d^n| \Theta)}{\int_{\Theta}\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} p(Y_d^n | \Theta)} p(\Theta) d\Theta
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}}\dbinom{N}{d} p(Y_d^n| \Theta)}{\int_{\Theta}\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} \dbinom{N}{d}p(Y_d^n | \Theta)} p(\Theta) d\Theta
 \end{equation}
 
 Where $Y_d^N$ define a realisation of an adjacency matrix with a degree $d$ for node $i$ (arbitrary choice between $i$ and $j$ in a undirected graph) and a density $n+d$. Again the joint exchangeability of the models gives us a similar result than equation \eqref{eq:sum}.
 
 Thus it proves that the density is increasing with $N$, and thus that the number of edge scale at least in $N^2$. 
 
-This result shows that the model generate dense networks because the model is misspecified. This result in a direct consequence of the theorem of Haldous for exchangeable graph.
+This result shows that the model generate dense networks because the model is misspecified. This result is a direct consequence of the theorem of Haldous for exchangeable graph.
 
 
 \end{document}
