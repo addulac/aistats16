@@ -208,10 +208,10 @@ $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 
 In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a links:
 \begin{equation}
-p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} \dbinom{\dbinom{N}{2}}{n} p(Y,|E|=n | \Theta)}{\int_{\Theta}\sum_{n=0}^{\dbinom{N}{2}}\dbinom{\dbinom{N}{2}}{n} p(Y,|E|=n | \Theta)} p(\Theta) d\Theta
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} p(Y_d^n| \Theta)}{\int_{\Theta}\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} p(Y_d^n | \Theta)} p(\Theta) d\Theta
 \end{equation}
 
-Where $Y$ define a realisation of an adjacency matrix having $|E|=n$ edges. Again the joint exchangeability of the models gives us a similar result than equation \eqref{eq:sum}.
+Where $Y_d^N$ define a realisation of an adjacency matrix with a degree $d$ for node $i$ (arbitrary choice between $i$ and $j$ in a undirected graph) and a density $n+d$. Again the joint exchangeability of the models gives us a similar result than equation \eqref{eq:sum}.
 
 Thus it proves that the density is increasing with $N$, and thus that the number of edge scale at least in $N^2$. 
 
