@@ -55,14 +55,14 @@ Mon raisonnement est le suivant:
 \end{enumerate}
 
 De la définition du burstiness on obtient:
-\begin{equation}
+\begin{equation} 
 p(y_{ij} = 1 | d_i>n, \mathcal{M}) = \int_{\Theta} p(y_{ij}=1|\Theta) \frac{p(d_i>n | \Theta)}{p(d_i>n)} p(\Theta) d\Theta
 \end{equation}
 
 Dans [*] on montre que distribution sur le degré n'a pas de forme connue (fait bien connue pour le p(w) de LDA).
 Par contre, nous pouvons faire l'hypothèse que pour chaque valeur possible $l$  du degré généré, soit accompagné de la matrice Z contenant les valeurs des classe d'attributions, pour chaque lien généré. Notons que nous ne faisons aucune hypothèse sur la distribution des classes d'attributions (c'est à dire de leur concentration, on dit simplement que chaque liens (ou non lien) ets associé à un couple kk'). la distribution est désormais implicitement conditionné par Z. Hors, étant donnée que le modèle est jointement échangeable [aldous, Hoff], on obtient:
 
-\begin{align}
+\begin{align} \label{eq:sum}
 p(y_{ij} = 1 | d_i>n, \mathcal{M}) &= \int_{\Theta} p(y_{ij}=1|\Theta) \frac{\sum_{l=n}^N\dbinom{N}{l} p(d_i^N=l | \Theta)}{\int_{\Theta}\sum_{l=n}^N \dbinom{N}{l}p(d_i^N=l | \Theta)} p(\Theta) d\Theta \\
 &= \frac{\sum_l^N\dbinom{N}{l} \int_{\Theta} p(y_{ij}=1|\Theta) p(d_i^N=l | \Theta) p(\Theta) d\Theta }{\sum_l^N \dbinom{N}{l}\int_{\Theta} p(d_i^N=l | \Theta) p(\Theta) d\Theta } \\
 &=  \frac{\sum_l^N a_l}{\sum_l^N b_l} 
@@ -126,11 +126,100 @@ Again, we see that local preferential burstiness is true, furthermore as $ R_c  
 * local preferential attachment inter-commmunity!! (homophily vs stochastic equivalence). Pure power law function not possible (see expe)\\
 * impact of global density\\
 * Haldous hoover theorem and temporal networks sparsity and limit.
-
-
-\section{Discussions}
-
 * Relation with diaconis-Ylvisaker theorem, and how we generalize it, for mixed membershi model in exponential family. (probabilistic\_burstiness)
+
+\section{Smal World}\label{smal-world}
+
+The small world effect is the property that exhibits many real networks
+such as social networks and the Web. This result by making any nodes of
+the network connected to any others by a path of small length. One
+possible definition is as follows; given  two randomly chosen nodes \((ij)\), the
+expected shorted distance \(L\) between them grows proportionally with the logarithm
+of the number of nodes \(N\) in the network, that is:
+
+\begin{equation}
+L \propto \log(N)
+\end{equation}
+
+In this formalism scale-free networks are know to be ultra-small
+networks, with the shortest distance scale as \cite{cohen2003scale}:
+
+\begin{equation}
+L \propto \log\log(N)
+\end{equation}
+
+However, The notion of shortest distance is not an easy quantity to define in a
+random graph. However we defined the notion of latent class previously,
+where class define as a variable where links can occur inside (or
+outside). Hence one can have the
+intuition that if links are mostly created in a set of class (inner or
+outer), the shortest path between two random node is
+``proportional'' to the number of step needed  to go through all classes.
+
+In a case of iMMSB, the number of class is unknown and evolves with the data
+through an HDP prior. The question that we ask here, is how this number
+evolve with the size of the networks ie its number of vertices.
+
+In the HDP {[}WTEH{]}, we have two step DP that form a so called Chinese
+Restaurant Franchise (CRF) with infinite random component being:
+\begin{itemize}
+\item the number of
+table in each restaurant, where restaurant symbolically correspond to
+nodes and tables are each links (and non links) of this node. 
+\item the
+number of class in the franchise, where each table is associate to
+couple of classes.
+\end{itemize}
+
+By definition of a \(DP(\alpha)\), we know that for each new draw given
+\(i\) previous draws, the probability to generate a new group is equal
+to \(\frac{\alpha}{\alpha +i-1}\) indepently of the number of previous
+cluster. Moreover in the CRF, each table is draw from a DP while the
+classes for each tables are drawn fom one another DP (shared in all the
+franchise) . Thus we can express the expectation of the number of tables
+($\E[T|N, \alpha_0]$) and class ($\E[K|T, \gamma]$). We start by the first quantity, with a graph of size $N >> 0$:
+
+\begin{align}
+\E[T|N, \alpha_0] = \sum_{j=1}^N\sum_{i=1}^N \frac{\alpha_0}{\alpha_0 +i-1} = \alpha_0 N (\Psi(\alpha_0+N) - \Psi(\alpha_0))
+\end{align}
+Given the properties of the $\Psi$ function, we have three different limit for $E[T|N]$:
+\begin{itemize}
+	\item $\alpha_0 N log(1+\frac{N}{\alpha_0})$ if  $\alpha_0 \sim 0$
+	\item $\alpha_0 N log(N)$ if  $\alpha_0 \sim 1$
+\end{itemize}
+Here, we omit the case of $\alpha_0 >> 0$ as non usefull in real case because small value is preferred since it offers a better sparsity about the proportion of class that node belong to.
+Similarly, for the expectation of the number of class, we have:
+
+\begin{equation}
+\E[K|T, \gamma] = \sum_{i=1}^N\sum_{i=1}^{2T} \frac{\gamma}{\gamma +i-1} = \gamma (\Psi(\gamma+2T) - \Psi(\gamma))
+\end{equation}
+
+Finally one can note that $N >> 0$ implies that $T>>0$, hence we gives here a table of asymptotic value for $E_{T|\alpha_0}[E[K|T, \gamma]$:
+\begin{table}[h]
+	\begin{tabular}{c|cc}
+		 & $\alpha_O \sim 0$&$\alpha_O \sim 1$ \\
+		\hline
+		$\gamma \sim 0 (or \infty)$ & $2\gamma log(\frac{\alpha_0Nlog(N/\alpha_0)}{\gamma})$ & $2\gamma log(\frac{\alpha_0Nlog(N)}{\gamma})$ \\
+		$\gamma \sim 1$ & $2\gamma log(\alpha_0Nlog(N/\alpha_0))$ &  $2\gamma log(\alpha_0Nlog(N))$
+	\end{tabular}
+\end{table}
+
+We conclude that the model has some good affinities with the small world effect has the number of class grow in $log(log(N))$ if the paramater $\gamma$ has decay lesser than $exp(-N)$.
+
+
+\section{Sparsity}
+(defnition of dense and sparse netwroks are given in [Haldous])
+
+In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a links:
+\begin{equation}
+p(y_{ij}=1| |V|=N) =  \int_{\Theta} p(y_{ij}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} p(|V|=n | \Theta)}{\int_{\Theta}\sum_{n=0}^{\dbinom{N}{2}}p(|V|=n | \Theta)} p(\Theta) d\Theta
+\end{equation}
+
+again the joint excheangibility of the models gives us a similar result than equation \eqref{eq:sum}.
+
+Thus it prooves that the density is increasing with n, and thus that the number of edge scale at least in $N^2$. 
+
+It shows that the model generate dense networks because the model is mispecified. This result in a direct consequence of the theorem of Haldous for exchangeable graph.
 
 
 \end{document}
