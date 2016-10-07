@@ -23,4 +23,5 @@
 *.out
 *.synctex.gz
 *.pdf
+*/*.pdf
 table_results_old*.tex
