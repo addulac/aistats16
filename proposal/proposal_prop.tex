@@ -184,7 +184,7 @@ Given the properties of the $\Psi$ function, we have three different limit for $
 Here, we omit the case of $\alpha_0 >> 0$ as non usefull in real case because small value is preferred since it offers a better sparsity about on the proportion of classes that node belongs to. Similarly, for the expectation of the number of class, we have:
 
 \begin{equation}
-\E[K|T, \gamma] = \sum_{i=1}^N\sum_{i=1}^{2T} \frac{\gamma}{\gamma +i-1} = \gamma (\Psi(\gamma+2T) - \Psi(\gamma))
+\E[K|T, \gamma] = \sum_{i=1}^{2T} \frac{\gamma}{\gamma +i-1} = \gamma (\Psi(\gamma+2T) - \Psi(\gamma))
 \end{equation}
 
 Finally one can note that $N >> 0$ implies that $T>>0$, hence we give here a table of asymptotic value for $E_{T|\alpha_0}[E[K|T, \gamma]$:
@@ -193,8 +193,8 @@ Finally one can note that $N >> 0$ implies that $T>>0$, hence we give here a tab
 	\begin{tabular}{c|cc}
 		 & $\alpha_O \sim 0$&$\alpha_O \sim 1$ \\
 		\hline
-		$\gamma \sim 0 (or \infty)$ & $2\gamma log(\frac{\alpha_0Nlog(N/\alpha_0)}{\gamma})$ & $2\gamma log(\frac{\alpha_0Nlog(N)}{\gamma})$ \\
-		$\gamma \sim 1$ & $2\gamma log(\alpha_0Nlog(N/\alpha_0))$ &  $2\gamma log(\alpha_0Nlog(N))$
+		$\gamma \sim 0 (or \infty)$ & $\gamma log(2\frac{\alpha_0Nlog(N/\alpha_0)}{\gamma})$ & $\gamma log(2\frac{\alpha_0Nlog(N)}{\gamma})$ \\
+		$\gamma \sim 1$ & $\gamma log(2\alpha_0Nlog(N/\alpha_0))$ &  $\gamma log(2\alpha_0Nlog(N))$
 	\end{tabular}
 %\end{table}
 
@@ -208,7 +208,7 @@ $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 
 In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a link:
 \begin{equation}
-p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}}\dbinom{N}{d} p(Y_d^n| \Theta)}{\int_{\Theta}\sum_{d=0}^{N} \sum_{n=0}^{\dbinom{N-1}{2}} \dbinom{N}{d}p(Y_d^n | \Theta)} p(\Theta) d\Theta
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N-1}{2}}\sum_{d=0}^{n} \dbinom{n}{d} p(Y_d^n| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N-1}{2}}\sum_{d=0}^{n} \dbinom{n}{d} p(Y_d^n | \Theta)} p(\Theta) d\Theta
 \end{equation}
 
 Where $Y_d^n$ define a realisation of an adjacency matrix with a degree $d$ for node $i$ (arbitrary choice between $i$ and $j$ in a undirected graph) and a density $n+d$. Again the joint exchangeability of the models gives us a similar result than equation \eqref{eq:sum}.
