@@ -214,9 +214,9 @@ In the model the density for undirected networks of size $|V|=N$ is defined by t
 \begin{equation}
 p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} p(d^N=n| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} p(d^N=n | \Theta)} p(\Theta) d\Theta
 \end{equation}
-Where  $p(d^N=n)$ is the probability of a random graph with $N$ vertices and having $n$ edges. Thus it refers to the density of the graph. We now define the set of  adjacency matrix $Y_r$ corresponding to the ensemble of graphs having $n$ edges (and $N$ vertices) $Y_r \in \{Y: d=n\}$. Because of the exchangeability of the models, each of those adjacency matrix have the same distribution given $\Theta$ and occurs $N!$ times. Hence we have that:
+Where  $p(d^N=n)$ is the probability of a random graph with $N$ vertices and having $n$ edges. Thus it refers to the density of the graph. We now define the set of  adjacency matrix $Y_r$ corresponding to the ensemble of graphs having $n$ edges (and $N$ vertices) $Y_r \in \{Y: d=n\}$. Because of the exchangeability of the models, each of those adjacency matrices have the same distribution given $\Theta$, and the number of different graph that occurs are $\dbinom{N}{C(Y_r)}$, with $C(Y_r)$ is the number of node of the $Y_r$ having non empty degree:
 \begin{equation}
-p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r | \Theta)} p(\Theta) d\Theta
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} \sum_{Y_r \in \{Y: d=n\}}\dbinom{N}{C(Y_r)} p(Y_r| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}}  \sum_{Y_r \in \{Y: d=n\}}\dbinom{N}{C(Y_r)} p(Y_r | \Theta)} p(\Theta) d\Theta
 \end{equation}
 
 %\begin{equation}
