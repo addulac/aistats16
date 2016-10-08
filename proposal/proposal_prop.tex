@@ -203,14 +203,18 @@ $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 
 
 \section{Sparsity}
-(defnition of dense and sparse netwroks are given in [Aldous])
 
+\begin{itemize}
+\item defnition of dense and sparse netwroks are given in Bayesian Models of Graphs, Arrays and Other Exchangeable Random Structures(Peter Orbanz and Daniel M. Roy) \\
+
+\item definition of exchangeability for networs first mention in this interesting paper: Modeling homophily and stochastic equivalence in symmetric relational data [Hoff]
+\end{itemize}
 
 In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a link:
 \begin{equation}
 p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} p(d^N=n| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} p(d^N=n | \Theta)} p(\Theta) d\Theta
 \end{equation}
-Where  $p(d^N=n)$ is the probability of random graph with $N$ vertices and having $n$ edges. Thus it refers to the density of the graph. We now define the set of  adjacency matrix $Y_r$ corresponding to the ensemble of graphs having a $n$ edges (and $N$ vertices) $Y_r \in \{Y: d=n\}$. Because of the exchangeability of the models, each of those adjacency matrix have the same distribution given $\Theta$ and occurs $N!$ times. Hence we have that:
+Where  $p(d^N=n)$ is the probability of a random graph with $N$ vertices and having $n$ edges. Thus it refers to the density of the graph. We now define the set of  adjacency matrix $Y_r$ corresponding to the ensemble of graphs having $n$ edges (and $N$ vertices) $Y_r \in \{Y: d=n\}$. Because of the exchangeability of the models, each of those adjacency matrix have the same distribution given $\Theta$ and occurs $N!$ times. Hence we have that:
 \begin{equation}
 p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r | \Theta)} p(\Theta) d\Theta
 \end{equation}
