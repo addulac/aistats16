@@ -203,19 +203,27 @@ $$\lim_{N\to\infty} \frac{\gamma_N}{e^{-N}} \to \infty$$
 
 
 \section{Sparsity}
-(defnition of dense and sparse netwroks are given in [Haldous])
+(defnition of dense and sparse netwroks are given in [Aldous])
 
 
 In the model the density for undirected networks of size $|V|=N$ is defined by the expectation of generating a link:
 \begin{equation}
-p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N-1}{2}}\sum_{d=0}^{n} \dbinom{n}{d} p(Y_d^n| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N-1}{2}}\sum_{d=0}^{n} \dbinom{n}{d} p(Y_d^n | \Theta)} p(\Theta) d\Theta
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} p(d^N=n| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} p(d^N=n | \Theta)} p(\Theta) d\Theta
+\end{equation}
+Where  $p(d^N=n)$ is the probability of random graph with $N$ vertices and having $n$ edges. Thus it refers to the density of the graph. We now define the set of  adjacency matrix $Y_r$ corresponding to the ensemble of graphs having a $n$ edges (and $N$ vertices) $Y_r \in \{Y: d=n\}$. Because of the exchangeability of the models, each of those adjacency matrix have the same distribution given $\Theta$ and occurs $N!$ times. Hence we have that:
+\begin{equation}
+p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) \frac{\sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r| \Theta)}{\int_{\Theta} \sum_{n=0}^{\dbinom{N}{2}} N! \sum_{Y_r \in \{Y: d=n\}} p(Y_r | \Theta)} p(\Theta) d\Theta
 \end{equation}
 
-Where $Y_d^n$ define a realisation of an adjacency matrix with a degree $d$ for node $i$ (arbitrary choice between $i$ and $j$ in a undirected graph) and a density $n+d$. Again the joint exchangeability of the models gives us a similar result than equation \eqref{eq:sum}.
+%\begin{equation}
+%p(y_{ij}^{new}=1| |V|=N) =  \int_{\Theta} p(y_{ij}^{new}=1|\Theta) %\frac{\sum_{|\textbf{exG}|_{ij}} \textrm{comb}(\textbf{exG}_{ij}) p(Y_{\textrm{exG}_{ij}}| %\Theta)}{\int_{\Theta} \sum_{|\textbf{exG}_{ij}|} \textrm{comb}(\textbf{exG}_{ij}) %p(Y_{\textrm{exG}_{ij}} | \Theta)} p(\Theta) d\Theta
+%\end{equation}
 
-Thus it proves that the density is increasing with $N$, and thus that the number of edge scale at least in $N^2$. 
+Here, one can see that from excheangeability we can take out the sum over graph from the integral on the parameters. The density take though a similar form than equation  \eqref{eq:sum}. We have then that $\Delta_N p(y_{ij}^{new}=1| |V|=N) >0 $.
 
-This result shows that the model generate dense networks because the model is misspecified. This result is a direct consequence of the theorem of Haldous for exchangeable graph.
+Thus it proves that the density is increasing with $N$, and thus that the number of edge scale at least in $N^2$, since the density id defined as $\frac{|E|}{\dbinom{N}{2}}$. 
+
+This result shows that the model generate dense networks because the model is misspecified. More precisely there is no assumptions on the relation between the size of the graph $|V|$ and the number of edge $|E|$, in other words the integral on the model parameter $\Theta$ and the sum over all possible graph can be exchanged because of the exchangability of the models. This result is a direct consequence of the theorem of Aldous for exchangeable graph.
 
 
 \end{document}
