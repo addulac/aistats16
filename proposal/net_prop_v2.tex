@@ -119,7 +119,7 @@ As for LDA, there is no closed form expression for this integral due to complex 
 Even though the degree distribution has no closed form, the predictive likelihood that a node $i$ generate a \emph{new unobserved edge} $y_{ij}$ given it's degree $d_i$ out of $N_o$ observed edges can be estimated due to the conjugacy of priors within MMSB model. More formally let's first consider that the membership matrix $Z$ associated with the observed degree is known. One can consider the given set $\mathcal{D} = \{d_i, Z\}$. Hence we can rewrite equation \eqref{eq:mmsb_like} as follows:
 
 \begin{align} \label{eq:pred}
-p(y_{ij}^{new} \mid \D, \alpha, \lambda) &= \int_{fi} \int_{f_j} \int_{\Phi} p(f_i|\D, \alpha, ) p(f_j|\D, \alpha)p(\Phi|\D, \lambda, ) \\
+p(y_{ij}^{new} \mid \D, \alpha, \lambda) &= \int_{f_i} \int_{f_j} \int_{\Phi} p(f_i|\D, \alpha, ) p(f_j|\D, \alpha)p(\Phi|\D, \lambda, ) \\
 &\times \sum_{k<k'} p(y_{ij} \mid \phi_{kk'})\ p(k\mid f_i)p(k'\mid f_j)df_i df_j d\Phi
 \end{align}
 

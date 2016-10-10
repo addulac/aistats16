@@ -223,7 +223,9 @@ In the model the density for undirected networks of size $|V|=N$ is defined by t
 %Here, one can see that from excheangeability we can take out the sum over graph from the integral on the parameters. The density take though a similar form than equation  \eqref{eq:sum}. We have then that $\Delta_N p(y_{ij}^{new}=1| |V|=N) >0 $.
 
 \begin{align}
-p(y_{ij}^{new}=1| |V|=N) &= p(y_{ij}^{new}=1| \mathcal{M})\\
+p(y_{ij}^{new}=1| |V|=N) &= p(y_{ij}^{new}=1| \mathcal{M})=\int_{f_i} \int_{f_j} \int_{\Phi} p(f_i| \alpha ) p(f_j| \alpha)p(\Phi| \lambda) \\
+&\times \sum_{k<k'} p(y_{ij} \mid \phi_{kk'})\ p(k\mid f_i)p(k'\mid f_j)df_i df_j d\Phi \\
+&=  \sum_{k<k'} \int_{\Phi} \phi_{kk'} p(\Phi| \lambda) d\Phi \int_{f_i} f_{ik} p(f_i| \alpha )df_i \int_{f_j} f_{jk}  p(f_j| \alpha ) df_j \\
 &= \sum_{k<k'} \E[B(\lambda_1, \lambda_0)] \E[Dir(\mat{\alpha} )]_k \E[Dir(\mat{\alpha})]_{k'} \\
 &= \frac{\lambda_1}{\lambda_0+\lambda_1}\frac{\sum_{kk'} \alpha_k\alpha_k'}{(\sum_k \alpha_k)^2} = \epsilon
 \end{align}
@@ -232,6 +234,38 @@ p(y_{ij}^{new}=1| |V|=N) &= p(y_{ij}^{new}=1| \mathcal{M})\\
 Thus the density is not dependent of $N$, and thus the number of edge grows with $N^2$ since its expectation is  $\dbinom{N}{2} \epsilon$.
 
 This result shows that the model generate dense networks because the model is misspecified. More precisely there is no assumptions on the relation between the size of the graph $|V|$ and the number of edge $|E|$, in other words the integral on the model parameter $\Theta$ and the sum over all possible graph can be exchanged because of the exchangability of the models. This result is a direct consequence of the theorem of Aldous for exchangeable graph.
+
+
+
+\section{Discussion / Definition}
+
+Why $\M_e$ can be bursty while $\M_g$ cannot ?\\ Because $\M_e$ contains information about an observed $Y$, more precisely the sufficient statistics of $Y$ (its degree particularly ! and this a sufficient statistics, because the joint echangeability conserve the degree).
+
+Here are my definition of the models:
+\begin{itemize}
+\item $M_g =\{\alpha, \lambda\}$ the generative model. Knowledge about the hyper-parameters.
+\item $\M_e = \{\M_g,  Y\}$ The generative model learn on $Y$, ie an augmented form where information contained in the networks $Y$ is now included in the model. (I would prefer $\M_l$ for model learned.)
+\end{itemize}
+
+
+Answering the burstiness according to both model $\M_g$ and $\M_l$ is different.\\
+              
+The one with $\M_g$: is this model likely to produce stronger degree given that he \textbf{generated} a degree $d=n$ (ex Strong burstiness, the model "know the properties" by design). \\
+              
+The one with $\M_e$: is this model likely to produce stronger degree given that he \textbf{observed} a degree $d=n$. (ex Weak burstiness, the model "learn the burstiness")
+
+Answer for question one, is clearly no.
+For the question two, I answered for:
+\begin{equation} \label{eq:burst1}
+p(y_{ij} = 1 | d_i>n, Z_d) = f_{Z_d}(\frac{a_n}{b_n})
+\end{equation}
+
+Which is crescent with n. But, now one can write:
+\begin{equation}
+p(y_{ij} = 1 | d_i>n) = \sum_{Z_d} f_{Z_d}(\frac{a_n}{b_n}) p(Z_d)
+\end{equation}
+
+We see that $p(Z_d)$ has non information on $d_i$, and so do not depend on him. So if \eqref{eq:burst1} if crescent with $n$, $\M_e$ is bursty and can "learn" the preferential attachment.
 
 
 \end{document}
