@@ -1,27 +1,45 @@
 \section{Background}
 \label{sec:background}
-Without loss of generality, we focus on social networks with binary relationships. Our object of interest is the topology of the network representing the presence or absence of links between nodes in the graph. The network can be either directed or not. For a network with $N$ nodes, we represent the topology by an adjacency matrix $Y \in \{0,1\}^{N\times N}$ associated to a graph $G = (V,E)$, where $V$ is a set of nodes representing entities, $E \in V \times V$ is a set of edges who represents relationships between pairs of entities. From a probabilistic point of view, the network topology is modeled using a kernel with a Bernoulli density. The parameters of the Bernoulli is the probability to observe a link between two nodes.
 
-We define a matrix of weight interactions $\mat{\Phi} \in W^{K\times K}$ with $W$ the space of weights, where $K$ is the number of classes or features. Let $\mat{F} \in \mathcal{F}^{N\times K}$, be a matrix where each row $i$ represents the latent feature vector associated to the node $i$,  and $\cal{F}$ the latent feature space. Hence for the MMSB and ILFM, the latent feature vectors are respectively proportion vectors (who sum to one) and binary vectors. In this framework the network is generated with the following density:
-\begin{equation} \label{MFDCA}
-    Y \sim \mathrm{Bern}(\sigma(\mat{F} \mat{\Phi}  \mat{F}^T))
-\end{equation}
-where $\sigma$ is a function that map values to a probability space. When $\sigma$ is the identity function, the expectation of the observation reduces to a matrix factorization (bilinear) expression, and is related to Discrete Component Analysis (DCA)~\cite{DCA}:
-\begin{equation}
-E_{p(y|\Theta, \Phi)}[Y] = \mat{F} \mat{\Phi}  \mat{F}^T
-\end{equation}
+Without loss of generality, we focus on social networks with binary relationships. A network with $N$ nodes is a graph $G = (V,E)$, where $V$ is a set of nodes (typically representing entities) and $E \in V \times V$ is a set of edges between nodes (typically representing relationships between pairs of entities).The topology of the network is described by the presence or absence of links between nodes in the graph, and can be represented by an adjacency matrix $Y \in \{0,1\}^{N\times N}$. 
 
-This matrix factorization approach of the Bayesian model is in due to the likelihood of the model when we marginalize over the class membership. Indeed the probability to have a link for the interaction $(i,j)$ is:
-\begin{equation} \label{eq:mf}
-\pr(y_{ij}=1 \mid \mat{F}, \mat{\Phi } ) = \sum_{k, k'} \pr(y_{ij}=1\mid\phi_{k,k'}) \pr(k \mid \mat{f}_i) \pr(k' \mid \mat{f}_j)
-\end{equation}
+Mixed-membership stochastic block models (\cite{MMSB}) generate links between nodes according to the interactions between the latent classes to which the nodes belong. The interactions between latent classes are captured in a weight matrix, $\mat{\Phi} \in (0,1)^{K\times K}$, where $K$ denotes the number of latent classes. The assignment of nodes to latent classes are captured in a matrix $\mat{F} \in (0,1)^{N\times K}$, in which each line $i$ ($1\le i \le N$) corresponds to the probability distribution of node $i$ over the latent classes. From $\mat{F}$ and $\mat{\phi}$, the probability of connecting two nodes $i$ and $j$ is based on a Bernoulli distribution integrating the weight of the two classes for $i$ and $j$ obtained from $\mat{F}$. In the standard, parametric version, $\mat{F}$ is obtained through a Dirichlet distribution.
+
+In order to be as general as possible, we consider here the non-parametric version of MMSB, that considers, in lieu of the Dirichlet distribution, a hierarchical Dirichlet process to generate $\mat{F}$. Our results nevertheless directly extend to the parametric version. The generative model behind the non-parametric model is based on the following steps:
+%
+\begin{enumerate}
+\item Generate the class membership matrix $\mat{F}_{N \times \infty}$:
+   \begin{align}
+    &\bm{\beta} \sim \gem(\gamma) \nonumber \\
+    \mat{f}_i &\sim \DP(\alpha_0, \beta) \quad\text{ for }  i \in \{1, .., N\} \nonumber
+   \end{align}
+where $\gem$ denotes the Griffiths, Engen and McCloskey distribution (\cite{pitman2002pda}) over the set of natural numbers and $\DP$ a Dirichlet Process \cite{HDP}. $\mat{f}_i$ denotes the row vector corresponding to the $i^{th}$ row of $\mat{F}$.
+\item Generate a weight matrix for each latent class:\\
+\[ \phi_{mn} \sim \mathrm{Beta}(\lambda_0,\lambda_1), \, m,n \in \mathbb{N}^{+*} \]
+\item For any node $i$ and any node $j$, choose a class from their class membership distribution and generate or not a link according to:
+   \begin{align}
+    z_{i \rightarrow j} &\sim \mbox{Cat}(\mat{f}_i) \nonumber \\
+    z_{i \leftarrow j} &\sim \mbox{Cat}(\mat{f}_j) \nonumber \\
+    y_{ij} &\sim \mathrm{Bern}(\phi_{z_{i \rightarrow j}z_{i \leftarrow j}})
+    \label{eq:link-immsb}
+   \end{align}
+\end{enumerate}
+%
+This model relies on four real hyper-parameters, two for the hierarchical Dirichlet process ($\gamma$ and $\alpha_0$) and two for the Beta distribution underlying the weight matrix ($\lambda_0$ and $\lambda_1$). In the case of undirected networks, the matrices $\mat{Y}$ and $\mat{\Phi}$ are symmetric and only their upper (or lower) diagonal parts are generated. Both $\mat{F}$ and $\mat{\Phi}$ are infinite matrices in the non-parametric versions (the rows of $\mat{F}$ still sum to $1$). A graphical representation of this model is given in Figure~\ref{fig:mmsb}.
 
 
-See the Appendix~\ref{sec:mixmembership} for a justification of eq \eqref{eq:mf} using a Mixed Membership Model approach. In this framework, we want to answer the following questions:
-\begin{itemize}
-	\item What properties the model can capture or learn on networks ?
-	\item Which constraint on the models can come with an consistent interpretation of latent variables along with the concepts of communities structure and homophily in social networks  ?
-\end{itemize} 
+\begin{figure}[t]
+	\centering
+		\minipage{0.25\textwidth}
+	\scalebox{0.88}{
+		\input{./img/mmsb2.tex}}
+	\endminipage
+	\caption{Graphical representation of the non-parametric version of the latent class model MMSB.}
+	\label{fig:mmsb}
+\end{figure}
 
-In the next session we review the models of interest.
+The inference is this model can be performed via collapsed Gibbs sampling updates. Most updates can be found in \cite{HDP} and \cite{diMMSB}. For completeness, we provide them in Appendix~\ref{sec:append}.
 
+As mentioned before, we will consider two versions of this model. A first, purely generative version that solely relies on the hyper-parameters to generate networks with a given number of nodes $N$. The question we address in this case is whether or not this generative process (that marginalizes over $\mat{F}$ and $\mat{\phi}$) yields networks that have the desired homophily, preferential attachment and small world effects. The second version assumes that some observations are available and are used to estimate $\mat{F}$ and $\mat{\phi}$ (we'll denote by $\mat{\hat{F}}$ and $\mat{\hat{\phi}}$ their estimates). The question this time is whether, the number of nodes $N$ being fixed and corresponding to the one in the observations, the new links that are created comply with the homophily, preferential attachment and small world effects.
+
+In the remainder, we will denote by $\mathcal{M}_g$ (generative) and $\mathcal{M}_e$ (estimated) the two versions of the non-parametric MMSB model we consider. We now turn to the two questions we asked, considering the homophily effect first.
