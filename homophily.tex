@@ -9,7 +9,7 @@ Homophily refers to the tendency of individuals to connect to similar others: tw
 A definition of homophily has been proposed in~\cite{la2010randomization}. However, this definition, which relies on a single characteristic (as age or gender), does not allow one to assess whether latent models for link prediction capture the homophily effect or not. We thus introduce a new definition of homophily below, which directly aims at this:
 %
 \begin{definition}[Homophily]
-	Let $\mathcal{M}=\{\mathcal{M}_g,\mathcal{M}_e\}$ be a link prediction model as defined above and $s$ a similarity measure between nodes. We say that \emph{$\mathcal{M}$ captures the homophily effect} iff, $\forall (i,j,i',j') \in V^4$:
+	Let $\mathcal{M}$ be a link prediction model and $s$ a similarity measure between nodes. We say that \emph{$\mathcal{M}$ captures the homophily effect} iff, $\forall (i,j,i',j') \in V^4$:
 %
 \begin{equation}
 \begin{array}{l}
@@ -21,37 +21,32 @@ s(i,j) > s(i',j')  \implies \nonumber \\
 A model which verifies this condition is said to be \emph{homophilic}.
 \end{definition}
 %
-As one can note, this definition directly captures the effect "if two nodes are more similar, then they are more likely to be connected". The similarity function assesses to which extent two nodes share the same characteristics. In the case of $\mathcal{M}_e$, the parameters $\mat{\hat{F}}$ and $\mat{\hat{\Phi}}$ respectively capture the latent characteristics of nodes and the weights (or correlations) between the dimensions of these representations; a natural similarity between node characteristics is thus provided by:
+As one can note, this definition directly captures the effect "if two nodes are more similar, then they are more likely to be connected". The similarity function assesses to which extent two nodes share the same (latent) characteristics (or classes). In the case of $\mathcal{M}_e$, these characteristics are captured in the latent features $\mat{F}$ as the model implicitly tries to relate through $\mat{F}$ nodes that are connected in the observation. In the case of $\mathcal{M}_g$ however, there is no mechanism to define latent characteristics as $\mat{F}$ is solely defined from probability distributions that say nothing about possible shared characteristics of nodes. There is thus no sense in this case to talk about homophily. For this reason, we focus on $\mathcal{M}_e$ for homophily. 
+
+The estimated matrix $\mat{\hat{F}}$ captures some latent characteristics of the nodes, whereas the estimated matrix $\mat{\hat{\Phi}}$ captures the correlations between these latent characteristics. One can thus define, on their basis, a "natural" similarity between nodes as follows:
 %
 \begin{equation}
-s_e(i,j) = \mat{\hat{f}}_{i} \mat{\hat{\Phi}} \mat{\hat{f}}_j^\top
-\label{eq:natural-sim}
+s(i,j) = \mat{\hat{f}}_{i} \mat{\hat{\Phi}} \mat{\hat{f}}_j^\top \nonumber
+%\label{eq:natural-sim}
 \end{equation}
 %
-In the case of $\mathcal{M}_g$, one needs to generalize the above similarity by considering its expectation over $\mat{F}$ and $\mat{\Phi}$:
+It is straightforward that $\mathcal{M}_e$ is homophilic wrt to $s$, as $s(i,j)$ corresponds to the probability of generating a link between nodes $i$ and $j$ (Eq.~\ref{eq:link-me}). We thus have the following property:
 %
-\begin{equation}
-s_g(i,j) = \int_{\mat{\phi},\mat{f}_i,\mat{f}_j} \mat{f}_i \mat{\Phi} \mat{f}_j^\top \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j
-\label{eq:natural-sim}
-\end{equation}
-%
-From this, one can state the following property:
-%
-\begin{proposition}[] (1) $\mathcal{M}_g$ is homophilic wrt $s_g$; (2) $\mathcal{M}_e$ is homophilic wrt $s_e$.
+\begin{proposition}[] $\mathcal{M}_e$ is homophilic wrt $s$.
 \end{proposition}
 %
-\noindent \textbf{Proof} We prove (1), the proof for (1) being similar. We have:
-%
-\begin{equation}
-\begin{array}{l}
-\pr(y_{ij}=1|\mathcal{M}_g) = \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \sum_{k,k'} \phi_{k,k'} \pr(z_{i \rightarrow j}=k|\mat{f}_i) \nonumber \\
-\pr(z_{j \leftarrow i}=k'|\mat{f}_j) \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
-= \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \sum_{k,k'} \phi_{k,k'} f_{ik} f_{jk'} \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
-= \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \mat{f}_i \mat{\Phi} \mat{f}_j^\top \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
-= s_g(i,j) \nonumber
-\end{array}
-\end{equation}
-%
-where $f_{ik}$ denotes the element of $\mat{F}$ at the $i^{th}$ row and $k^{th}$ column and where the second equality stems from the definitions of $z_{i \rightarrow j}$ and $z_{j \leftarrow i}$. This leads to the desired result. \hspace{5.5cm} $\Box$
+%\noindent \textbf{Proof} We prove (1), the proof for (1) being similar. We have:
+%%
+%\begin{equation}
+%\begin{array}{l}
+%\pr(y_{ij}=1|\mathcal{M}_g) = \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \sum_{k,k'} \phi_{k,k'} \pr(z_{i \rightarrow j}=k|\mat{f}_i) \nonumber \\
+%\pr(z_{j \leftarrow i}=k'|\mat{f}_j) \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
+%= \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \sum_{k,k'} \phi_{k,k'} f_{ik} f_{jk'} \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
+%= \int_{\mat{\Phi},\mat{f}_i,\mat{f}_j} \mat{f}_i \mat{\Phi} \mat{f}_j^\top \pr(\mat{\Phi},\mat{f}_i,\mat{f}_j|\mathcal{M}_g)  d\mat{\Phi}\mat{f}_i\mat{f}_j \nonumber \\
+%= s_g(i,j) \nonumber
+%\end{array}
+%\end{equation}
+%%
+%where $f_{ik}$ denotes the element of $\mat{F}$ at the $i^{th}$ row and $k^{th}$ column and where the second equality stems from the definitions of $z_{i \rightarrow j}$ and $z_{j \leftarrow i}$. This leads to the desired result. \hspace{5.5cm} $\Box$
 
-The above development shows that the two versions of MMSB capture the homophily effect, with the "natural" similarities we have considered. We now turn to the preferential attachment effect.
+Hence MMSB in its standard use captures the homophily effect with the "natural" similarity we have considered. We now turn to the preferential attachment effect.

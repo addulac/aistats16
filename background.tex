@@ -40,6 +40,18 @@ This model relies on four real hyper-parameters, two for the hierarchical Dirich
 
 The inference is this model can be performed via collapsed Gibbs sampling updates. Most updates can be found in \cite{HDP} and \cite{diMMSB}. For completeness, we provide them in Appendix~\ref{sec:append}.
 
-As mentioned before, we will consider two versions of this model. A first, purely generative version that solely relies on the hyper-parameters to generate networks with a given number of nodes $N$. The question we address in this case is whether or not this generative process (that marginalizes over $\mat{F}$ and $\mat{\phi}$) yields networks that have the desired homophily, preferential attachment and small world effects. The second version assumes that some observations are available and are used to estimate $\mat{F}$ and $\mat{\phi}$ (we'll denote by $\mat{\hat{F}}$ and $\mat{\hat{\phi}}$ their estimates). The question this time is whether, the number of nodes $N$ being fixed and corresponding to the one in the observations, the new links that are created comply with the homophily, preferential attachment and small world effects.
+As mentioned before, we will consider two versions of this model. The first version corresponds to the typical use of the MMSB model: some observations are available and are used to estimate $\mat{F}$ and $\mat{\Phi}$. In the remainder, we denote by $\mat{\hat{F}}$ and $\mat{\hat{\Phi}}$ their estimates, which are used to predict new links in the network according to:
+%
+\begin{equation}
+\label{eq:link-me}
+\pr(y_{ij}=1|\mat{\hat{F}},\mat{\hat{\Phi}}) =  \mat{\hat{f}}_{i} \mat{\hat{\Phi}} \mat{\hat{f}}_j^\top
+\end{equation}
+%
+where $^\top$ denotes the transpose. We will refer to the model corresponding to this setting as $\mathcal{M}_e$ ($\mathcal{M}_e = \{\mat{\hat{F}},\mat{\hat{\Phi}}\}$). Note that the number of nodes $N$ is fixed and corresponds to the number of nodes present in the observation.
 
-In the remainder, we will denote by $\mathcal{M}_g$ (generative) and $\mathcal{M}_e$ (estimated) the two versions of the non-parametric MMSB model we consider. We now turn to the two questions we asked, considering the homophily effect first.
+The second version is a purely generative version that solely relies on the hyper-parameters to generate networks with a given number of nodes $N$. We will refer to the model corresponding to this setting as $\mathcal{M}_g$ ($\mathcal{M}_g = \{\alpha_0,\gamma,\lambda_0,\lambda_1\}$). The probability of generating a link between two nodes $i$ and $j$ is given by:
+%
+
+
+%
+We now turn to the two questions we asked, considering the homophily effect first.
